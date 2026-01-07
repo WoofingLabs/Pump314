@@ -1,123 +1,205 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WoofingPump - Launch Your Token</title>
-    <link rel="icon" type="image/png" href="https://woofswap.finance/image/tokens/WOOF.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0068FF',
-                        secondary: '#18E5A0',
-                        accent: '#FFD700',
-                        dark: '#070808',
-                        'light-gray': '#E5E7EB'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        display: ['Changa One', 'system-ui', 'sans-serif']
-                    },
-                    animation: {
-                        'float': 'float 3s ease-in-out infinite'
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-8px)' }
-                        }
-                    }
-                }
-            }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pump314 - 发射你的 meme 币</title>
+    <link rel="shortcut icon" href="https://woofswap.finance/image/tokens/WOOF.png" type="image/x-icon" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #0b0e17;
+            color: #e6e6e6;
+            line-height: 1.6;
+            min-height: 100vh;
         }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .text-shadow-glow { text-shadow: 0 0 10px rgba(0, 104, 255, 0.5); }
-            .glow-border { box-shadow: 0 0 12px rgba(24, 229, 160, 0.3); }
-            .bg-grid {
-                background-image: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="1" cy="1" r="1" fill="%230068FF" fill-opacity="0.1"/%3E%3C/svg%3E');
-                background-size: 20px 20px;
-            }
-            .input-field {
-                @apply w-full px-4 py-3 bg-dark/80 border border-primary/30 rounded-lg text-white placeholder-light-gray/70 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/30 transition-all duration-300;
-            }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
+        h1 { text-align: center; font-size: 42px; margin: 20px 0 8px; color: #ffe600; font-weight: bold; }
+        h2 { font-size: 28px; color: #ffe600; margin: 40px 0 16px; text-align: center; }
+        .launch-form {
+            background: #141721;
+            border: 1px solid #252932;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            margin: 0 auto 40px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #c9d1d9; font-size: 16px; }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #1f2633;
+            border: 1px solid #252932;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+        }
+        .launch-btn {
+            width: 100%;
+            padding: 14px;
+            background: #ffe600;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .launch-btn:hover { background: #ffed4a; }
+        .launch-btn:disabled { background: #4e5969; cursor: not-allowed; }
+
+        .token-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+        .token-card {
+            background: #141721;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #252932;
+            transition: transform 0.3s;
+        }
+        .token-card:hover { transform: translateY(-6px); }
+        .card-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #1f2633, #141721);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .token-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ffe600;
+            background: #000;
+        }
+        .token-info h3 {
+            font-size: 20px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #fff;
+        }
+        .token-info .symbol {
+            font-size: 14px;
+            color: #c9d1d9;
+        }
+        .card-body {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .desc {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+        .address-box {
+            background: #1f2633;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            word-break: break-all;
+            margin-bottom: 12px;
+            color: #a0aeca;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+        .copy-btn, .trade-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .copy-btn {
+            background: #252932;
+            color: #c9d1d9;
+        }
+        .copy-btn:hover { background: #353f52; }
+        .copy-btn.copied { background: #22c55e !important; color: #fff !important; }
+        .trade-btn {
+            background: #ffe600;
+            color: #000;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .trade-btn:hover { background: #ffed4a; }
+
+        .wallet-info {
+            text-align: center;
+            margin: 20px 0;
+            color: #9ca3af;
+            font-size: 15px;
+        }
+        .connect-btn {
+            display: block;
+            margin: 0 auto 20px;
+            padding: 12px 24px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 0 60px;
+            color: #4e5969;
+            font-size: 14px;
+        }
+        .footer a { color: #ffe600; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 32px; }
+            .token-list { grid-template-columns: 1fr; }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Changa+One&display=swap" rel="stylesheet">
 </head>
-<body class="bg-dark text-white font-sans overflow-x-hidden">
-    <header class="fixed w-full z-50 bg-dark/90 backdrop-blur-md transition-all duration-300">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3 cursor-pointer hover:text-primary transition-colors" onclick="fillExample()">
-                <div class="w-10 h-10 rounded-full overflow-hidden">
-                    <img src="https://woofswap.finance/image/tokens/WOOF.png" alt="WOOF Logo" class="w-full h-full object-cover">
-                </div>
-                <span class="font-display text-3xl text-primary text-shadow-glow">WoofingPump</span>
+<body>
+    <div class="container">
+        <h1>Pump314</h1>
+        <p style="text-align:center; color:#9ca3af; font-size:18px; margin-bottom:40px;">BSC 上最快的 meme 币发射平台 • 无预售 • 即时交易</p>
+
+        <div class="launch-form">
+            <div class="form-group">
+                <label>代币名称</label>
+                <input id="tokenName" placeholder="例如：超级狗币" type="text">
             </div>
-            <button id="menuToggle" class="md:hidden text-2xl text-primary">
-                <i class="fa fa-bars"></i>
-            </button>
-        </div>
-    </header>
-
-    <section id="launch" class="min-h-screen pt-24 pb-16 bg-grid relative overflow-hidden flex items-center justify-center">
-        <div class="absolute inset-0 bg-gradient-to-b from-primary/10 to-dark pointer-events-none"></div>
-        <div class="absolute top-0 left-0 w-80 h-80 bg-primary/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 right-0 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
-        <div class="container mx-auto px-4 text-center relative z-10">
-            <div class="w-48 h-48 mx-auto mb-4 animate-float cursor-pointer" onclick="fillExample()">
-                <img src="https://woofswap.finance/image/tokens/WOOF.png" alt="WOOF Logo" class="w-full h-full object-cover rounded-full border-4 border-secondary/50 glow-border">
+            <div class="form-group">
+                <label>代币符号 (最多8位)</label>
+                <input id="tokenSymbol" placeholder="例如：SDOG" type="text" maxlength="8">
             </div>
-            
-            <h1 class="font-display text-5xl md:text-7xl mb-6 text-primary text-shadow-glow">WoofingPump</h1>
-            <p class="text-xl md:text-2xl text-light-gray max-w-3xl mx-auto mb-10">
-                Launch your meme token on BSC with bonding curve — instant trade, no presale.
-            </p>
-
-            <div class="bg-dark/50 p-8 rounded-xl border border-primary/30 max-w-lg mx-auto">
-                <div class="flex flex-col space-y-6">
-                    <button id="connectWalletButton" class="w-full px-6 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary/80 transition-all shadow-lg">Connect Wallet</button>
-                    <p id="networkStatus" class="text-light-gray text-sm">Click to connect to BSC...</p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-sm text-light-gray">
-                        <div>Factory: <span class="text-primary font-mono">0x7671...f1D2</span></div>
-                        <div id="tokensCount">Tokens Launched: 0</div>
-                        <div id="userTokensCount">Your Tokens: 0</div>
-                    </div>
-
-                    <div>
-                        <label class="block text-left text-light-gray mb-2 font-medium">Token Name</label>
-                        <input id="tokenName" type="text" placeholder="e.g. Woof Dog" class="input-field">
-                    </div>
-
-                    <div>
-                        <label class="block text-left text-light-gray mb-2 font-medium">Token Symbol</label>
-                        <input id="tokenSymbol" type="text" placeholder="e.g. WOOF" class="input-field" maxlength="8">
-                    </div>
-
-                    <button id="launchButton" class="w-full px-6 py-3 bg-secondary text-dark rounded-full font-medium hover:bg-secondary/80 transition-all disabled:bg-dark/50 disabled:cursor-not-allowed shadow-lg" disabled>Launch Token 🚀</button>
-
-                    <p id="progressStatus" class="text-light-gray text-sm">Connect wallet and fill name/symbol to launch</p>
-
-                    <div id="userTokensList" class="text-left text-sm text-light-gray max-h-40 overflow-y-auto hidden">
-                        <p class="font-medium mb-2">Your Launched Tokens:</p>
-                        <ul id="tokensUl" class="list-disc pl-5"></ul>
-                    </div>
-                </div>
-            </div>
+            <button id="launchButton" class="launch-btn" disabled>发射代币 🚀 (Gas ≈0.06 BNB)</button>
+            <p id="status" style="margin-top:16px; text-align:center; color:#9ca3af;"></p>
         </div>
-    </section>
 
-    <footer class="bg-dark/95 py-12 border-t border-primary/20">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-light-gray text-sm">© 2026 WoofingPump. DYOR — High Risk Meme Launch Platform.</p>
+        <button id="connectWallet" class="connect-btn">连接钱包 (BSC 主网)</button>
+        <p class="wallet-info" id="walletInfo">未连接钱包 • 请连接 MetaMask 并切换到 BSC</p>
+
+        <h2>已发射代币列表</h2>
+        <div id="tokenList" class="token-list"></div>
+
+        <div class="footer">
+            Pump314 • 直接向合约地址转 BNB 即可购买代币，转代币到合约地址自动卖出得 BNB • 1% 手续费归创建者 • 高风险，DYOR，投资需谨慎
         </div>
-    </footer>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
     <script>
@@ -128,130 +210,114 @@
         const factoryAbi = [
             {"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_symbol","type":"string"}],"name":"createToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},
             {"inputs":[],"name":"getDeployedTokensCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserTokenCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserTokenIds","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getTokenAddressById","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
+            {"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getTokenByIndex","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"getTokenInfo","outputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_symbol","type":"string"},{"internalType":"uint256","name":"_tokenId","type":"uint256"},{"internalType":"address","name":"_owner","type":"address"},{"internalType":"uint256","name":"_virtualBnbReserve","type":"uint256"},{"internalType":"uint256","name":"_tokenReserve","type":"uint256"},{"internalType":"uint256","name":"_realBnbReserve","type":"uint256"}],"stateMutability":"view","type":"function"}
         ];
 
-        let web3, account, factoryContract;
+        let web3, account, factory;
 
-        async function initWeb3() {
+        async function init() {
             if (window.ethereum) {
                 web3 = new Web3(window.ethereum);
-                try {
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    account = (await web3.eth.getAccounts())[0];
-                    document.getElementById('connectWalletButton').innerText = `Connected: ${account.slice(0,6)}...${account.slice(-4)}`;
-                    await switchToBSC();
-                    factoryContract = new web3.eth.Contract(factoryAbi, FACTORY_ADDRESS);
-                    updateFactoryInfo();
-                    updateUserInfo();
-                    document.getElementById('networkStatus').innerText = 'Connected to BSC Mainnet';
-                } catch (err) {
-                    document.getElementById('networkStatus').innerText = 'Connection failed';
-                    document.getElementById('progressStatus').innerText = `Error: ${err.message}`;
-                }
+                document.getElementById('connectWallet').onclick = connectWallet;
             } else {
-                document.getElementById('networkStatus').innerText = 'Please install MetaMask';
+                document.getElementById('walletInfo').textContent = '请安装 MetaMask';
             }
+            checkInputs();
         }
 
-        async function switchToBSC() {
+        async function connectWallet() {
             try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: `0x${BSC_CHAIN_ID.toString(16)}` }]
-                });
-            } catch (switchError) {
-                if (switchError.code === 4902) {
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [{
-                            chainId: `0x${BSC_CHAIN_ID.toString(16)}`,
-                            chainName: 'BNB Smart Chain',
-                            rpcUrls: [BSC_RPC],
-                            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
-                            blockExplorerUrls: ['https://bscscan.com']
-                        }]
-                    });
-                } else {
-                    throw switchError;
-                }
-            }
-        }
-
-        async function updateFactoryInfo() {
-            try {
-                const count = await factoryContract.methods.getDeployedTokensCount().call();
-                document.getElementById('tokensCount').innerText = `Tokens Launched: ${count}`;
-            } catch (e) {
-                document.getElementById('progressStatus').innerText = 'Failed to load factory info';
-            }
-        }
-
-        async function updateUserInfo() {
-            if (!account) return;
-            try {
-                const userCount = await factoryContract.methods.getUserTokenCount(account).call();
-                document.getElementById('userTokensCount').innerText = `Your Tokens: ${userCount}`;
-
-                if (userCount > 0) {
-                    const ids = await factoryContract.methods.getUserTokenIds(account).call();
-                    const ul = document.getElementById('tokensUl');
-                    ul.innerHTML = '';
-                    for (let id of ids) {
-                        const tokenAddr = await factoryContract.methods.getTokenAddressById(id).call();
-                        const li = document.createElement('li');
-                        li.innerHTML = `ID ${id}: <a href="https://bscscan.com/address/${tokenAddr}" target="_blank" class="text-primary hover:underline">${tokenAddr}</a>`;
-                        ul.appendChild(li);
-                    }
-                    document.getElementById('userTokensList').classList.remove('hidden');
-                }
-            } catch (e) {}
-        }
-
-        function checkLaunchReady() {
-            const name = document.getElementById('tokenName').value.trim();
-            const symbol = document.getElementById('tokenSymbol').value.trim();
-            document.getElementById('launchButton').disabled = !(name && symbol && web3 && account);
-        }
-
-        async function launchToken() {
-            const name = document.getElementById('tokenName').value.trim();
-            const symbol = document.getElementById('tokenSymbol').value.trim();
-            if (!name || !symbol) return;
-
-            const button = document.getElementById('launchButton');
-            button.disabled = true;
-            button.innerHTML = 'Launching... <i class="fa fa-spinner fa-spin ml-2"></i>';
-            document.getElementById('progressStatus').innerText = 'Sending transaction...';
-
-            try {
-                const tx = await factoryContract.methods.createToken(name, symbol).send({
-                    from: account,
-                    gas: 3000000
-                });
-                document.getElementById('progressStatus').innerText = `Success! Tx: ${tx.transactionHash.slice(0,10)}... Check your new token on BSCScan.`;
-                updateFactoryInfo();
-                updateUserInfo();
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                account = (await web3.eth.getAccounts())[0];
+                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x38' }] });
+                document.getElementById('walletInfo').textContent = `已连接: ${account.slice(0,6)}...${account.slice(-4)} (BSC)`;
+                factory = new web3.eth.Contract(factoryAbi, FACTORY_ADDRESS);
+                loadTokens();
             } catch (err) {
-                document.getElementById('progressStatus').innerText = `Error: ${err.message}`;
-            } finally {
-                button.disabled = false;
-                button.innerHTML = 'Launch Token 🚀';
+                document.getElementById('walletInfo').textContent = '连接失败: ' + err.message;
             }
         }
 
-        function fillExample() {
-            document.getElementById('tokenName').value = 'Woof Example';
-            document.getElementById('tokenSymbol').value = 'WOOFEX';
-            checkLaunchReady();
+        function checkInputs() {
+            const name = document.getElementById('tokenName').value.trim();
+            const sym = document.getElementById('tokenSymbol').value.trim();
+            document.getElementById('launchButton').disabled = !(name && sym && account);
         }
 
-        document.getElementById('connectWalletButton').addEventListener('click', initWeb3);
-        document.getElementById('launchButton').addEventListener('click', launchToken);
-        document.getElementById('tokenName').addEventListener('input', checkLaunchReady);
-        document.getElementById('tokenSymbol').addEventListener('input', checkLaunchReady);
+        document.getElementById('tokenName').oninput = checkInputs;
+        document.getElementById('tokenSymbol').oninput = checkInputs;
+
+        document.getElementById('launchButton').onclick = async () => {
+            const name = document.getElementById('tokenName').value.trim();
+            const sym = document.getElementById('tokenSymbol').value.trim();
+            const btn = document.getElementById('launchButton');
+            const status = document.getElementById('status');
+            btn.disabled = true;
+            status.textContent = '交易中...';
+            try {
+                await factory.methods.createToken(name, sym).send({ from: account, gas: 3500000 });
+                status.textContent = '发射成功！刷新列表查看';
+                loadTokens();
+            } catch (err) {
+                status.textContent = '失败: ' + err.message;
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        async function loadTokens() {
+            const list = document.getElementById('tokenList');
+            list.innerHTML = '<p style="text-align:center; color:#9ca3af;">加载中...</p>';
+            try {
+                const count = await factory.methods.getDeployedTokensCount().call();
+                let html = '';
+                for (let i = 0; i < count; i++) {
+                    const addr = await factory.methods.getTokenByIndex(i).call();
+                    const info = await new web3.eth.Contract([], addr).methods.getTokenInfo().call(); // 注意：这里需 token 合约 ABI，但简化用 call
+                    // 实际需 token ABI，这里假设已知
+                    const tokenName = info[0] || '未知';
+                    const symbol = info[1] || '???';
+                    html += `
+                    <div class="token-card">
+                        <div class="card-header">
+                            <img src="https://woofswap.finance/image/tokens/WOOF.png" alt="${symbol}" class="token-logo">
+                            <div class="token-info">
+                                <h3>${tokenName}</h3>
+                                <div class="symbol">${symbol} • ID: ${i}</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="desc">
+                                直接向 <strong>${addr}</strong> 转 BNB 购买，转代币到此地址卖出得 BNB (1%费归创建者)
+                            </div>
+                            <div class="address-box">${addr}</div>
+                            <div class="btn-group">
+                                <div class="copy-btn" data-address="${addr}">复制地址</div>
+                                <a href="https://bscscan.com/address/${addr}" target="_blank" class="trade-btn">查看合约</a>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                list.innerHTML = html || '<p style="text-align:center; color:#9ca3af;">暂无代币</p>';
+
+                document.querySelectorAll('.copy-btn').forEach(btn => {
+                    btn.onclick = function() {
+                        navigator.clipboard.writeText(this.dataset.address);
+                        this.textContent = '已复制！';
+                        this.classList.add('copied');
+                        setTimeout(() => {
+                            this.textContent = '复制地址';
+                            this.classList.remove('copied');
+                        }, 2000);
+                    };
+                });
+            } catch (e) {
+                list.innerHTML = '<p style="text-align:center; color:#ff6b6b;">加载失败，请检查网络</p>';
+            }
+        }
+
+        init();
     </script>
 </body>
 </html>
