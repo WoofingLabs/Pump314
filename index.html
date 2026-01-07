@@ -7,169 +7,44 @@
     <link rel="shortcut icon" href="https://woofswap.finance/image/tokens/WOOF.png" type="image/x-icon" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #0b0e17;
-            color: #e6e6e6;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #0b0e17; color: #e6e6e6; line-height: 1.6; min-height: 100vh; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
         h1 { text-align: center; font-size: 42px; margin: 20px 0 8px; color: #ffe600; font-weight: bold; }
         h2 { font-size: 28px; color: #ffe600; margin: 40px 0 16px; text-align: center; }
-        .launch-form {
-            background: #141721;
-            border: 1px solid #252932;
-            border-radius: 12px;
-            padding: 24px;
-            max-width: 500px;
-            margin: 0 auto 40px;
-        }
+        .launch-form { background: #141721; border: 1px solid #252932; border-radius: 12px; padding: 24px; max-width: 500px; margin: 0 auto 40px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #c9d1d9; font-size: 16px; }
-        .form-group input {
-            width: 100%;
-            padding: 12px 16px;
-            background: #1f2633;
-            border: 1px solid #252932;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 16px;
-        }
-        .launch-btn {
-            width: 100%;
-            padding: 14px;
-            background: #ffe600;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+        .form-group input { width: 100%; padding: 12px 16px; background: #1f2633; border: 1px solid #252932; border-radius: 8px; color: #fff; font-size: 16px; }
+        .launch-btn { width: 100%; padding: 14px; background: #ffe600; color: #000; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
         .launch-btn:hover { background: #ffed4a; }
         .launch-btn:disabled { background: #4e5969; cursor: not-allowed; }
-
-        .token-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 16px;
-        }
-        .token-card {
-            background: #141721;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #252932;
-            transition: transform 0.3s;
-        }
+        .token-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+        .token-card { background: #141721; border-radius: 12px; overflow: hidden; border: 1px solid #252932; transition: transform 0.3s; }
         .token-card:hover { transform: translateY(-6px); }
-        .card-header {
-            padding: 16px;
-            background: linear-gradient(135deg, #1f2633, #141721);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .token-logo {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #ffe600;
-            background: #000;
-        }
-        .token-info h3 {
-            font-size: 20px;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #fff;
-        }
-        .token-info .symbol {
-            font-size: 14px;
-            color: #c9d1d9;
-        }
-        .card-body {
-            padding: 16px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .desc {
-            font-size: 14px;
-            color: #9ca3af;
-            margin-bottom: 16px;
-            flex: 1;
-        }
-        .address-box {
-            background: #1f2633;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 13px;
-            word-break: break-all;
-            margin-bottom: 12px;
-            color: #a0aeca;
-        }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-        }
-        .copy-btn, .trade-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .copy-btn {
-            background: #252932;
-            color: #c9d1d9;
-        }
+        .card-header { padding: 16px; background: linear-gradient(135deg, #1f2633, #141721); display: flex; align-items: center; gap: 12px; }
+        .token-logo { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #ffe600; background: #000; }
+        .token-info h3 { font-size: 20px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .token-info .symbol { font-size: 14px; color: #c9d1d9; }
+        .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .desc { font-size: 14px; color: #9ca3af; margin-bottom: 16px; flex: 1; }
+        .address-box { background: #1f2633; padding: 10px 12px; border-radius: 8px; font-family: monospace; font-size: 13px; word-break: break-all; margin-bottom: 12px; color: #a0aeca; }
+        .fee-info { font-size: 14px; color: #ffe600; margin-bottom: 12px; }
+        .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
+        .copy-btn, .trade-btn, .withdraw-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 15px; text-align: center; cursor: pointer; transition: all 0.3s; min-width: 120px; }
+        .copy-btn { background: #252932; color: #c9d1d9; }
         .copy-btn:hover { background: #353f52; }
         .copy-btn.copied { background: #22c55e !important; color: #fff !important; }
-        .trade-btn {
-            background: #ffe600;
-            color: #000;
-            font-weight: bold;
-            text-decoration: none;
-        }
+        .trade-btn { background: #ffe600; color: #000; font-weight: bold; text-decoration: none; }
         .trade-btn:hover { background: #ffed4a; }
-
-        .wallet-info {
-            text-align: center;
-            margin: 20px 0;
-            color: #9ca3af;
-            font-size: 15px;
-        }
-        .connect-btn {
-            display: block;
-            margin: 0 auto 20px;
-            padding: 12px 24px;
-            background: #6366f1;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .footer {
-            text-align: center;
-            padding: 40px 0 60px;
-            color: #4e5969;
-            font-size: 14px;
-        }
+        .withdraw-btn { background: #ef4444; color: #fff; font-weight: bold; border: none; }
+        .withdraw-btn:hover { background: #dc2626; }
+        .withdraw-btn:disabled { background: #4b5563; cursor: not-allowed; }
+        .wallet-info { text-align: center; margin: 20px 0; color: #9ca3af; font-size: 15px; }
+        .connect-btn { display: block; margin: 0 auto 20px; padding: 12px 24px; background: #6366f1; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .footer { text-align: center; padding: 40px 0 60px; color: #4e5969; font-size: 14px; }
         .footer a { color: #ffe600; text-decoration: none; }
         .footer a:hover { text-decoration: underline; }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 32px; }
-            .token-list { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 768px) { h1 { font-size: 32px; } .token-list { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -193,26 +68,33 @@
         <button id="connectWallet" class="connect-btn">连接钱包 (BSC 主网)</button>
         <p class="wallet-info" id="walletInfo">未连接钱包 • 请连接 MetaMask 并切换到 BSC</p>
 
-        <h2>已发射代币列表</h2>
+        <h2>我的代币 & 提取手续费</h2>
+        <div id="myTokensList" class="token-list"></div>
+
+        <h2>所有已发射代币</h2>
         <div id="tokenList" class="token-list"></div>
 
         <div class="footer">
-            Pump314 • 直接向合约地址转 BNB 即可购买代币，转代币到合约地址自动卖出得 BNB • 1% 手续费归创建者 • Gas price 目前 ≈0.05 Gwei，创建费用极低（<0.001 BNB） • 高风险，DYOR，投资需谨慎
+            Pump314 • 直接向合约地址转 BNB 买代币，转代币到合约地址卖出得 BNB • 1% 手续费积累在合约，owner 可随时提取 • Gas price 目前 ≈0.05 Gwei，创建/提取费用极低（<0.001 BNB） • 高风险，DYOR，投资需谨慎
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
     <script>
         const FACTORY_ADDRESS = '0x7671Ad453Ddeb2230C96F36ffffA106bBD42f1D2';
-        const BSC_CHAIN_ID = 56;
 
         const factoryAbi = [
             {"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_symbol","type":"string"}],"name":"createToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},
             {"inputs":[],"name":"getDeployedTokensCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getTokenByIndex","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
+            {"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getTokenByIndex","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserTokenCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserTokenIds","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},
+            {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getTokenAddressById","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
         ];
 
-        const tokenAbiSnippet = [
+        const tokenAbi = [
+            {"inputs":[],"name":"getWithdrawableFees","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"withdrawFees","outputs":[],"stateMutability":"nonpayable","type":"function"},
             {"inputs":[],"name":"getTokenInfo","outputs":[
                 {"internalType":"string","name":"_name","type":"string"},
                 {"internalType":"string","name":"_symbol","type":"string"},
@@ -221,7 +103,8 @@
                 {"internalType":"uint256","name":"_virtualBnbReserve","type":"uint256"},
                 {"internalType":"uint256","name":"_tokenReserve","type":"uint256"},
                 {"internalType":"uint256","name":"_realBnbReserve","type":"uint256"}
-            ],"stateMutability":"view","type":"function"}
+            ],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
         ];
 
         let web3, account, factory;
@@ -244,21 +127,13 @@
                     await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x38' }] });
                 } catch (switchErr) {
                     if (switchErr.code === 4902) {
-                        await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [{
-                                chainId: '0x38',
-                                chainName: 'BNB Smart Chain',
-                                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
-                                rpcUrls: ['https://bsc-dataseed.binance.org/'],
-                                blockExplorerUrls: ['https://bscscan.com']
-                            }]
-                        });
+                        await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{ chainId: '0x38', chainName: 'BNB Smart Chain', nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }, rpcUrls: ['https://bsc-dataseed.binance.org/'], blockExplorerUrls: ['https://bscscan.com'] }] });
                     }
                 }
                 document.getElementById('walletInfo').textContent = `已连接: ${account.slice(0,6)}...${account.slice(-4)}`;
                 factory = new web3.eth.Contract(factoryAbi, FACTORY_ADDRESS);
-                loadTokens();
+                loadMyTokens();
+                loadAllTokens();
             } catch (err) {
                 document.getElementById('walletInfo').textContent = '连接失败: ' + (err.message || '未知错误');
             }
@@ -282,13 +157,10 @@
             status.textContent = '发射中... (Gas price ≈0.05 Gwei，总费用极低)';
             try {
                 const gasPrice = await web3.eth.getGasPrice();
-                const tx = await factory.methods.createToken(name, sym).send({ 
-                    from: account, 
-                    gas: 4000000,
-                    gasPrice
-                });
-                status.textContent = `发射成功！交易哈希: ${tx.transactionHash.slice(0,10)}... 查看: https://bscscan.com/tx/${tx.transactionHash}`;
-                loadTokens();
+                const tx = await factory.methods.createToken(name, sym).send({ from: account, gas: 4000000, gasPrice });
+                status.textContent = `发射成功！交易: ${tx.transactionHash.slice(0,10)}... 查看: https://bscscan.com/tx/${tx.transactionHash}`;
+                loadMyTokens();
+                loadAllTokens();
             } catch (err) {
                 status.textContent = '发射失败: ' + (err.message.includes('insufficient funds') ? '余额不足' : err.message);
             } finally {
@@ -296,9 +168,69 @@
             }
         };
 
-        async function loadTokens() {
+        async function loadMyTokens() {
+            if (!account) return;
+            const list = document.getElementById('myTokensList');
+            list.innerHTML = '<p style="text-align:center; color:#9ca3af;">加载我的代币...</p>';
+            try {
+                const count = await factory.methods.getUserTokenCount(account).call();
+                if (Number(count) === 0) {
+                    list.innerHTML = '<p style="text-align:center; color:#ffe600;">你还没有创建任何代币</p>';
+                    return;
+                }
+                const ids = await factory.methods.getUserTokenIds(account).call();
+                let html = '';
+                for (let id of ids) {
+                    const addr = await factory.methods.getTokenAddressById(id).call();
+                    const token = new web3.eth.Contract(tokenAbi, addr);
+                    let info, owner, fees;
+                    try {
+                        info = await token.methods.getTokenInfo().call();
+                        owner = await token.methods.owner().call();
+                        fees = await token.methods.getWithdrawableFees().call();
+                    } catch {
+                        info = ['未知', '???', id, '0x0', '0', '0', '0'];
+                        owner = '未知';
+                        fees = '0';
+                    }
+                    const tokenName = info[0] || '未知代币';
+                    const symbol = info[1] || '???';
+                    const isOwner = owner.toLowerCase() === account.toLowerCase();
+                    const feeBNB = web3.utils.fromWei(fees, 'ether');
+                    html += `
+                    <div class="token-card">
+                        <div class="card-header">
+                            <img src="https://woofswap.finance/image/tokens/WOOF.png" alt="${symbol}" class="token-logo">
+                            <div class="token-info">
+                                <h3>${tokenName}</h3>
+                                <div class="symbol">${symbol} • ID: ${id}</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="desc">
+                                合约: <strong>${addr}</strong><br>
+                                玩法: 转 BNB 买，转代币卖（1%费积累）
+                            </div>
+                            <div class="address-box">${addr}</div>
+                            <div class="fee-info">可提取手续费: ${Number(feeBNB).toFixed(6)} BNB ${isOwner ? '' : '(非你的 token)'}</div>
+                            <div class="btn-group">
+                                <div class="copy-btn" data-address="${addr}">复制地址</div>
+                                <a href="https://bscscan.com/address/${addr}" target="_blank" class="trade-btn">查看 BscScan</a>
+                                ${isOwner && Number(fees) > 0 ? `<button class="withdraw-btn" data-addr="${addr}">提取手续费</button>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                list.innerHTML = html;
+                bindButtons();
+            } catch (e) {
+                list.innerHTML = `<p style="text-align:center; color:#ff6b6b;">加载失败: ${e.message || '请检查网络'}</p>`;
+            }
+        }
+
+        async function loadAllTokens() {
             const list = document.getElementById('tokenList');
-            list.innerHTML = '<p style="text-align:center; color:#9ca3af;">加载代币列表中...</p>';
+            list.innerHTML = '<p style="text-align:center; color:#9ca3af;">加载所有代币...</p>';
             try {
                 const count = await factory.methods.getDeployedTokensCount().call();
                 if (Number(count) === 0) {
@@ -308,29 +240,17 @@
                 let html = '';
                 for (let i = 0; i < count; i++) {
                     const addr = await factory.methods.getTokenByIndex(i).call();
-                    const tokenContract = new web3.eth.Contract(tokenAbiSnippet, addr);
-                    let info;
-                    try {
-                        info = await tokenContract.methods.getTokenInfo().call();
-                    } catch {
-                        info = ['未知', '???', i, '0x0', '0', '0', '0'];
-                    }
-                    const tokenName = info[0] || '未知代币';
-                    const symbol = info[1] || '???';
                     html += `
                     <div class="token-card">
                         <div class="card-header">
-                            <img src="https://woofswap.finance/image/tokens/WOOF.png" alt="${symbol}" class="token-logo">
+                            <img src="https://woofswap.finance/image/tokens/WOOF.png" alt="Token" class="token-logo">
                             <div class="token-info">
-                                <h3>${tokenName}</h3>
-                                <div class="symbol">${symbol} • ID: ${i}</div>
+                                <h3>代币 #${i}</h3>
+                                <div class="symbol">加载中...</div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="desc">
-                                合约地址: <strong>${addr}</strong><br>
-                                玩法: 直接转 BNB 到此地址买代币，转代币到此地址卖出得 BNB（1%费归创建者）
-                            </div>
+                            <div class="desc">合约地址: <strong>${addr}</strong><br>转 BNB 买，转代币卖</div>
                             <div class="address-box">${addr}</div>
                             <div class="btn-group">
                                 <div class="copy-btn" data-address="${addr}">复制地址</div>
@@ -340,20 +260,40 @@
                     </div>`;
                 }
                 list.innerHTML = html;
-                document.querySelectorAll('.copy-btn').forEach(btn => {
-                    btn.onclick = function() {
-                        navigator.clipboard.writeText(this.dataset.address);
-                        this.textContent = '已复制！';
-                        this.classList.add('copied');
-                        setTimeout(() => {
-                            this.textContent = '复制地址';
-                            this.classList.remove('copied');
-                        }, 2000);
-                    };
-                });
+                bindButtons();
             } catch (e) {
-                list.innerHTML = `<p style="text-align:center; color:#ff6b6b;">加载失败: ${e.message || 'RPC 错误，请刷新或换网络'}</p>`;
+                list.innerHTML = `<p style="text-align:center; color:#ff6b6b;">加载失败: ${e.message || 'RPC 错误'}</p>`;
             }
+        }
+
+        function bindButtons() {
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.onclick = function() {
+                    navigator.clipboard.writeText(this.dataset.address);
+                    this.textContent = '已复制！';
+                    this.classList.add('copied');
+                    setTimeout(() => { this.textContent = '复制地址'; this.classList.remove('copied'); }, 2000);
+                };
+            });
+            document.querySelectorAll('.withdraw-btn').forEach(btn => {
+                btn.onclick = async function() {
+                    const addr = this.dataset.addr;
+                    const token = new web3.eth.Contract(tokenAbi, addr);
+                    this.disabled = true;
+                    this.textContent = '提取中...';
+                    try {
+                        const gasPrice = await web3.eth.getGasPrice();
+                        await token.methods.withdrawFees().send({ from: account, gas: 200000, gasPrice });
+                        alert('提取成功！手续费已转到你的钱包');
+                        loadMyTokens();
+                    } catch (err) {
+                        alert('提取失败: ' + err.message);
+                    } finally {
+                        this.disabled = false;
+                        this.textContent = '提取手续费';
+                    }
+                };
+            });
         }
 
         init();
