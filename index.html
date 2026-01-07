@@ -28,23 +28,18 @@
         .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
         .desc { font-size: 14px; color: #9ca3af; margin-bottom: 16px; flex: 1; }
         .address-box { background: #1f2633; padding: 10px 12px; border-radius: 8px; font-family: monospace; font-size: 13px; word-break: break-all; margin-bottom: 12px; color: #a0aeca; }
-        .fee-info { font-size: 14px; color: #ffe600; margin-bottom: 12px; }
+        .fee-info { font-size: 14px; color: #ffe600; margin-bottom: 12px; font-weight: bold; }
         .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
-        .copy-btn, .trade-btn, .withdraw-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 15px; text-align: center; cursor: pointer; transition: all 0.3s; min-width: 120px; }
+        .copy-btn, .withdraw-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 15px; text-align: center; cursor: pointer; transition: all 0.3s; min-width: 120px; }
         .copy-btn { background: #252932; color: #c9d1d9; }
         .copy-btn:hover { background: #353f52; }
         .copy-btn.copied { background: #22c55e !important; color: #fff !important; }
-        .trade-btn { background: #ffe600; color: #000; font-weight: bold; text-decoration: none; }
-        .trade-btn:hover { background: #ffed4a; }
         .withdraw-btn { background: #ef4444; color: #fff; font-weight: bold; border: none; }
         .withdraw-btn:hover { background: #dc2626; }
         .withdraw-btn:disabled { background: #4b5563; cursor: not-allowed; }
         .wallet-info { text-align: center; margin: 20px 0; color: #9ca3af; font-size: 15px; }
         .connect-btn { display: block; margin: 0 auto 20px; padding: 12px 24px; background: #6366f1; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
         .footer { text-align: center; padding: 40px 0 60px; color: #4e5969; font-size: 14px; }
-        .footer a { color: #ffe600; text-decoration: none; }
-        .footer a:hover { text-decoration: underline; }
-        @media (max-width: 768px) { h1 { font-size: 32px; } .token-list { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -71,11 +66,8 @@
         <h2>我的代币 & 提取手续费</h2>
         <div id="myTokensList" class="token-list"></div>
 
-        <h2>所有已发射代币</h2>
-        <div id="tokenList" class="token-list"></div>
-
         <div class="footer">
-            Pump314 • 直接向合约地址转 BNB 买代币，转代币到合约地址卖出得 BNB • 1% 手续费积累在合约，owner 可随时提取 • Gas price 目前 ≈0.05 Gwei，创建/提取费用极低（<0.001 BNB） • 高风险，DYOR，投资需谨慎
+            Pump314 • 直接向合约地址转 BNB 买代币，转代币到合约地址卖出得 BNB • 1% 手续费积累在合约，owner 可随时提取 • Gas price 目前 ≈0.05 Gwei，创建/提取费用极低 • 高风险，DYOR，投资需谨慎
         </div>
     </div>
 
@@ -85,8 +77,6 @@
 
         const factoryAbi = [
             {"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_symbol","type":"string"}],"name":"createToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},
-            {"inputs":[],"name":"getDeployedTokensCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getTokenByIndex","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
             {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserTokenCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
             {"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getUserTokenIds","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},
             {"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getTokenAddressById","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
@@ -133,7 +123,6 @@
                 document.getElementById('walletInfo').textContent = `已连接: ${account.slice(0,6)}...${account.slice(-4)}`;
                 factory = new web3.eth.Contract(factoryAbi, FACTORY_ADDRESS);
                 loadMyTokens();
-                loadAllTokens();
             } catch (err) {
                 document.getElementById('walletInfo').textContent = '连接失败: ' + (err.message || '未知错误');
             }
@@ -160,7 +149,6 @@
                 const tx = await factory.methods.createToken(name, sym).send({ from: account, gas: 4000000, gasPrice });
                 status.textContent = `发射成功！交易: ${tx.transactionHash.slice(0,10)}... 查看: https://bscscan.com/tx/${tx.transactionHash}`;
                 loadMyTokens();
-                loadAllTokens();
             } catch (err) {
                 status.textContent = '发射失败: ' + (err.message.includes('insufficient funds') ? '余额不足' : err.message);
             } finally {
@@ -183,19 +171,19 @@
                 for (let id of ids) {
                     const addr = await factory.methods.getTokenAddressById(id).call();
                     const token = new web3.eth.Contract(tokenAbi, addr);
-                    let info, owner, fees;
+                    let info, ownerAddr, fees;
                     try {
                         info = await token.methods.getTokenInfo().call();
-                        owner = await token.methods.owner().call();
+                        ownerAddr = await token.methods.owner().call();
                         fees = await token.methods.getWithdrawableFees().call();
                     } catch {
                         info = ['未知', '???', id, '0x0', '0', '0', '0'];
-                        owner = '未知';
+                        ownerAddr = '未知';
                         fees = '0';
                     }
                     const tokenName = info[0] || '未知代币';
                     const symbol = info[1] || '???';
-                    const isOwner = owner.toLowerCase() === account.toLowerCase();
+                    const isOwner = ownerAddr.toLowerCase() === account.toLowerCase();
                     const feeBNB = web3.utils.fromWei(fees, 'ether');
                     html += `
                     <div class="token-card">
@@ -212,11 +200,10 @@
                                 玩法: 转 BNB 买，转代币卖（1%费积累）
                             </div>
                             <div class="address-box">${addr}</div>
-                            <div class="fee-info">可提取手续费: ${Number(feeBNB).toFixed(6)} BNB ${isOwner ? '' : '(非你的 token)'}</div>
+                            <div class="fee-info">可提取手续费: ${Number(feeBNB).toFixed(6)} BNB</div>
                             <div class="btn-group">
                                 <div class="copy-btn" data-address="${addr}">复制地址</div>
-                                <a href="https://bscscan.com/address/${addr}" target="_blank" class="trade-btn">查看 BscScan</a>
-                                ${isOwner && Number(fees) > 0 ? `<button class="withdraw-btn" data-addr="${addr}">提取手续费</button>` : ''}
+                                ${isOwner && Number(fees) > 0 ? `<button class="withdraw-btn" data-addr="${addr}">提取手续费</button>` : (isOwner ? '<div style="flex:1; text-align:center; color:#9ca3af;">暂无手续费可提</div>' : '<div style="flex:1; text-align:center; color:#9ca3af;">非创建者，无法提取</div>')}
                             </div>
                         </div>
                     </div>`;
@@ -225,44 +212,6 @@
                 bindButtons();
             } catch (e) {
                 list.innerHTML = `<p style="text-align:center; color:#ff6b6b;">加载失败: ${e.message || '请检查网络'}</p>`;
-            }
-        }
-
-        async function loadAllTokens() {
-            const list = document.getElementById('tokenList');
-            list.innerHTML = '<p style="text-align:center; color:#9ca3af;">加载所有代币...</p>';
-            try {
-                const count = await factory.methods.getDeployedTokensCount().call();
-                if (Number(count) === 0) {
-                    list.innerHTML = '<p style="text-align:center; color:#ffe600; font-size:18px;">目前还没有任何人发射代币<br>快来第一个发射吧！🚀</p>';
-                    return;
-                }
-                let html = '';
-                for (let i = 0; i < count; i++) {
-                    const addr = await factory.methods.getTokenByIndex(i).call();
-                    html += `
-                    <div class="token-card">
-                        <div class="card-header">
-                            <img src="https://woofswap.finance/image/tokens/WOOF.png" alt="Token" class="token-logo">
-                            <div class="token-info">
-                                <h3>代币 #${i}</h3>
-                                <div class="symbol">加载中...</div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="desc">合约地址: <strong>${addr}</strong><br>转 BNB 买，转代币卖</div>
-                            <div class="address-box">${addr}</div>
-                            <div class="btn-group">
-                                <div class="copy-btn" data-address="${addr}">复制地址</div>
-                                <a href="https://bscscan.com/address/${addr}" target="_blank" class="trade-btn">查看 BscScan</a>
-                            </div>
-                        </div>
-                    </div>`;
-                }
-                list.innerHTML = html;
-                bindButtons();
-            } catch (e) {
-                list.innerHTML = `<p style="text-align:center; color:#ff6b6b;">加载失败: ${e.message || 'RPC 错误'}</p>`;
             }
         }
 
