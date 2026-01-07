@@ -186,7 +186,7 @@
                 <label>代币符号 (最多8位)</label>
                 <input id="tokenSymbol" placeholder="例如：SDOG" type="text" maxlength="8">
             </div>
-            <button id="launchButton" class="launch-btn" disabled>发射代币 🚀 (Gas ≈0.06 BNB)</button>
+            <button id="launchButton" class="launch-btn" disabled>发射代币 🚀 (Gas price ≈0.05 Gwei，总费极低)</button>
             <p id="status" style="margin-top:16px; text-align:center; color:#9ca3af;"></p>
         </div>
 
@@ -197,7 +197,7 @@
         <div id="tokenList" class="token-list"></div>
 
         <div class="footer">
-            Pump314 • 直接向合约地址转 BNB 即可购买代币，转代币到合约地址自动卖出得 BNB • 1% 手续费归创建者 • 高风险，DYOR，投资需谨慎
+            Pump314 • 直接向合约地址转 BNB 即可购买代币，转代币到合约地址自动卖出得 BNB • 1% 手续费归创建者 • Gas price 目前 ≈0.05 Gwei，创建费用极低（<0.001 BNB） • 高风险，DYOR，投资需谨慎
         </div>
     </div>
 
@@ -205,13 +205,23 @@
     <script>
         const FACTORY_ADDRESS = '0x7671Ad453Ddeb2230C96F36ffffA106bBD42f1D2';
         const BSC_CHAIN_ID = 56;
-        const BSC_RPC = 'https://bsc-dataseed.binance.org/';
 
         const factoryAbi = [
             {"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_symbol","type":"string"}],"name":"createToken","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},
             {"inputs":[],"name":"getDeployedTokensCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getTokenByIndex","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
-            {"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"getTokenInfo","outputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_symbol","type":"string"},{"internalType":"uint256","name":"_tokenId","type":"uint256"},{"internalType":"address","name":"_owner","type":"address"},{"internalType":"uint256","name":"_virtualBnbReserve","type":"uint256"},{"internalType":"uint256","name":"_tokenReserve","type":"uint256"},{"internalType":"uint256","name":"_realBnbReserve","type":"uint256"}],"stateMutability":"view","type":"function"}
+            {"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getTokenByIndex","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}
+        ];
+
+        const tokenAbiSnippet = [
+            {"inputs":[],"name":"getTokenInfo","outputs":[
+                {"internalType":"string","name":"_name","type":"string"},
+                {"internalType":"string","name":"_symbol","type":"string"},
+                {"internalType":"uint256","name":"_tokenId","type":"uint256"},
+                {"internalType":"address","name":"_owner","type":"address"},
+                {"internalType":"uint256","name":"_virtualBnbReserve","type":"uint256"},
+                {"internalType":"uint256","name":"_tokenReserve","type":"uint256"},
+                {"internalType":"uint256","name":"_realBnbReserve","type":"uint256"}
+            ],"stateMutability":"view","type":"function"}
         ];
 
         let web3, account, factory;
@@ -221,7 +231,7 @@
                 web3 = new Web3(window.ethereum);
                 document.getElementById('connectWallet').onclick = connectWallet;
             } else {
-                document.getElementById('walletInfo').textContent = '请安装 MetaMask';
+                document.getElementById('walletInfo').textContent = '请安装 MetaMask 或其他钱包';
             }
             checkInputs();
         }
@@ -230,12 +240,27 @@
             try {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
                 account = (await web3.eth.getAccounts())[0];
-                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x38' }] });
-                document.getElementById('walletInfo').textContent = `已连接: ${account.slice(0,6)}...${account.slice(-4)} (BSC)`;
+                try {
+                    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x38' }] });
+                } catch (switchErr) {
+                    if (switchErr.code === 4902) {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x38',
+                                chainName: 'BNB Smart Chain',
+                                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+                                rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                                blockExplorerUrls: ['https://bscscan.com']
+                            }]
+                        });
+                    }
+                }
+                document.getElementById('walletInfo').textContent = `已连接: ${account.slice(0,6)}...${account.slice(-4)}`;
                 factory = new web3.eth.Contract(factoryAbi, FACTORY_ADDRESS);
                 loadTokens();
             } catch (err) {
-                document.getElementById('walletInfo').textContent = '连接失败: ' + err.message;
+                document.getElementById('walletInfo').textContent = '连接失败: ' + (err.message || '未知错误');
             }
         }
 
@@ -254,13 +279,18 @@
             const btn = document.getElementById('launchButton');
             const status = document.getElementById('status');
             btn.disabled = true;
-            status.textContent = '交易中...';
+            status.textContent = '发射中... (Gas price ≈0.05 Gwei，总费用极低)';
             try {
-                await factory.methods.createToken(name, sym).send({ from: account, gas: 3500000 });
-                status.textContent = '发射成功！刷新列表查看';
+                const gasPrice = await web3.eth.getGasPrice();
+                const tx = await factory.methods.createToken(name, sym).send({ 
+                    from: account, 
+                    gas: 4000000,
+                    gasPrice
+                });
+                status.textContent = `发射成功！交易哈希: ${tx.transactionHash.slice(0,10)}... 查看: https://bscscan.com/tx/${tx.transactionHash}`;
                 loadTokens();
             } catch (err) {
-                status.textContent = '失败: ' + err.message;
+                status.textContent = '发射失败: ' + (err.message.includes('insufficient funds') ? '余额不足' : err.message);
             } finally {
                 btn.disabled = false;
             }
@@ -268,15 +298,24 @@
 
         async function loadTokens() {
             const list = document.getElementById('tokenList');
-            list.innerHTML = '<p style="text-align:center; color:#9ca3af;">加载中...</p>';
+            list.innerHTML = '<p style="text-align:center; color:#9ca3af;">加载代币列表中...</p>';
             try {
                 const count = await factory.methods.getDeployedTokensCount().call();
+                if (Number(count) === 0) {
+                    list.innerHTML = '<p style="text-align:center; color:#ffe600; font-size:18px;">目前还没有任何人发射代币<br>快来第一个发射吧！🚀</p>';
+                    return;
+                }
                 let html = '';
                 for (let i = 0; i < count; i++) {
                     const addr = await factory.methods.getTokenByIndex(i).call();
-                    const info = await new web3.eth.Contract([], addr).methods.getTokenInfo().call(); // 注意：这里需 token 合约 ABI，但简化用 call
-                    // 实际需 token ABI，这里假设已知
-                    const tokenName = info[0] || '未知';
+                    const tokenContract = new web3.eth.Contract(tokenAbiSnippet, addr);
+                    let info;
+                    try {
+                        info = await tokenContract.methods.getTokenInfo().call();
+                    } catch {
+                        info = ['未知', '???', i, '0x0', '0', '0', '0'];
+                    }
+                    const tokenName = info[0] || '未知代币';
                     const symbol = info[1] || '???';
                     html += `
                     <div class="token-card">
@@ -289,18 +328,18 @@
                         </div>
                         <div class="card-body">
                             <div class="desc">
-                                直接向 <strong>${addr}</strong> 转 BNB 购买，转代币到此地址卖出得 BNB (1%费归创建者)
+                                合约地址: <strong>${addr}</strong><br>
+                                玩法: 直接转 BNB 到此地址买代币，转代币到此地址卖出得 BNB（1%费归创建者）
                             </div>
                             <div class="address-box">${addr}</div>
                             <div class="btn-group">
                                 <div class="copy-btn" data-address="${addr}">复制地址</div>
-                                <a href="https://bscscan.com/address/${addr}" target="_blank" class="trade-btn">查看合约</a>
+                                <a href="https://bscscan.com/address/${addr}" target="_blank" class="trade-btn">查看 BscScan</a>
                             </div>
                         </div>
                     </div>`;
                 }
-                list.innerHTML = html || '<p style="text-align:center; color:#9ca3af;">暂无代币</p>';
-
+                list.innerHTML = html;
                 document.querySelectorAll('.copy-btn').forEach(btn => {
                     btn.onclick = function() {
                         navigator.clipboard.writeText(this.dataset.address);
@@ -313,7 +352,7 @@
                     };
                 });
             } catch (e) {
-                list.innerHTML = '<p style="text-align:center; color:#ff6b6b;">加载失败，请检查网络</p>';
+                list.innerHTML = `<p style="text-align:center; color:#ff6b6b;">加载失败: ${e.message || 'RPC 错误，请刷新或换网络'}</p>`;
             }
         }
 
